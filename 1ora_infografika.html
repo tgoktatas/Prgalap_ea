@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Programozás Infografika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Energetic & Playful -->
+    <!-- Narrative Plan & Structure: The infographic tells a story for a complete beginner, starting with a high-level "What is R?" hook. It then delves into the core philosophy ("Everything is an Object") using a visual metaphor. The narrative progresses to practical syntax ("The Basic Toolkit") and the building blocks ("Data Types"). Finally, it culminates in a "Putting It All Together" section with a simple, visualized analysis, showing the practical application of the concepts. This linear, concept-by-concept flow is designed for easy digestion and learning reinforcement. -->
+    <!-- Visualization & Content Choices: 
+    1. R's Popularity: Goal: Inform. Viz: Single Big Number (text). Justification: A large, bold statistic immediately grabs attention and establishes R's importance. Method: Styled HTML. (CONFIRMED NO SVG).
+    2. Object Concept: Goal: Organize. Viz: Flow Diagram. Justification: A simple visual flow is the clearest way to explain the abstract relationship between a variable name, an object, and its value. Method: Structured HTML divs with Tailwind CSS for styling (borders, colors, flexbox), creating a diagrammatic look without code. (CONFIRMED NO SVG/Mermaid).
+    3. Core Data Types: Goal: Compare/Inform. Viz: Donut Chart. Justification: A donut chart provides a visually engaging way to present the fundamental "parts" or types of data a beginner will encounter, making the concept less intimidating than a dry list. Method: Chart.js/Canvas. (CONFIRMED NO SVG).
+    4. Simple Analysis Example: Goal: Compare. Viz: Bar Chart. Justification: A bar chart is the most intuitive way to visualize the result of the sample code, directly comparing the sales figures for different products and making the data tangible. Method: Chart.js/Canvas. (CONFIRMED NO SVG).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            background-color: #F9F9F9;
+            color: #3A3A3A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .code-snippet {
+            background-color: #eef1f3;
+            border-left: 4px solid #45B7D1;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            border-radius: 0 0.5rem 0.5rem 0;
+            color: #333;
+        }
+        .flow-box {
+            border: 2px solid #4ECDC4;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            background-color: white;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#FF6B6B] mb-2">BEVEZETÉS AZ R VILÁGÁBA</h1>
+            <p class="text-xl text-gray-600">Az adatelemzés svájci bicskája</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section class="bg-white rounded-lg shadow-lg p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="md:col-span-1 text-center">
+                        <div class="text-7xl font-bold text-[#45B7D1]">1M+</div>
+                        <p class="mt-2 font-semibold text-gray-700">nyilvános GitHub kódtár</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <h2 class="text-2xl font-bold text-[#4ECDC4] mb-3">Mi az az R?</h2>
+                        <p class="text-gray-700 leading-relaxed">
+                            Az R egy programozási nyelv, amelyet kifejezetten statisztikai elemzésekre és adatok vizualizációjára terveztek. A kutatók és adatelemzők kedvenc eszköze, mert egy hatalmas, ingyenes csomagkönyvtárral rendelkezik, amely szinte minden adatelemzési feladatra kínál megoldást.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2 class="text-3xl font-bold text-center mb-8 text-[#FF6B6B]">Az R Alapfilozófiája: Minden egy Objektum</h2>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <p class="text-center text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+                        Képzeld el, hogy az R-ben minden adat egy dobozban van. Ennek a doboznak adsz egy nevet (változó), és ez a névvel ellátott doboz lesz az objektum. Ezzel a névvel később bármikor hivatkozhatsz a tartalmára.
+                    </p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="flow-box bg-[#FED766]/20 border-[#FED766]">
+                            <span class="text-lg">eletkor</span><br>
+                            <span class="text-sm text-gray-500">(A változó neve)</span>
+                        </div>
+                        <div class="flow-arrow transform md:-rotate-0 rotate-90">&rarr;</div>
+                        <div class="flow-box">
+                            <span class="text-lg">Objektum</span><br>
+                            <span class="text-sm text-gray-500">(A "doboz")</span>
+                        </div>
+                        <div class="flow-arrow transform md:-rotate-0 rotate-90">&rarr;</div>
+                        <div class="flow-box bg-[#45B7D1]/20 border-[#45B7D1]">
+                            <span class="text-lg">42</span><br>
+                            <span class="text-sm text-gray-500">(Az objektum értéke)</span>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <p class="text-center font-semibold text-lg text-gray-800 mb-2">Ez a kódban így néz ki:</p>
+                        <div class="code-snippet max-w-sm mx-auto text-center text-lg">
+                            eletkor &lt;- 42
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                 <h2 class="text-3xl font-bold text-center mb-8 text-[#4ECDC4]">A Kezdő Adattudós Eszköztára</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                         <h3 class="text-xl font-bold text-[#45B7D1] mb-4">Alapvető adattípusok</h3>
+                         <p class="text-gray-700 mb-6">Minden objektumnak van egy típusa, ami meghatározza, hogy milyen adatot tárol. Kezdetben ezekkel fogsz a leggyakrabban találkozni.</p>
+                         <div class="chart-container">
+                             <canvas id="dataTypesChart"></canvas>
+                         </div>
+                     </div>
+                     <div class="bg-white rounded-lg shadow-lg p-8">
+                        <h3 class="text-xl font-bold text-[#FF6B6B] mb-4">Gyakori Műveletek</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">1. Értékadás</h4>
+                                <p class="text-sm text-gray-600 mb-1">Objektum létrehozása a `&lt;-` operátorral.</p>
+                                <div class="code-snippet">szam &lt;- 100</div>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-gray-800">2. Művelet Végzés</h4>
+                                <p class="text-sm text-gray-600 mb-1">Objektumok használata számításokban.</p>
+                                <div class="code-snippet">eredmeny &lt;- szam * 2</div>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold text-gray-800">3. Függvényhívás</h4>
+                                <p class="text-sm text-gray-600 mb-1">Beépített függvények használata.</p>
+                                <div class="code-snippet">print("Helló, R!")</div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+            </section>
+            
+            <section>
+                <h2 class="text-3xl font-bold text-center mb-8 text-[#45B7D1]">Rakjuk Össze: Egy Egyszerű Példa</h2>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-xl font-bold text-[#FF6B6B] mb-4">A kód</h3>
+                            <p class="text-gray-700 mb-4">Hozzuk létre két vektort: egyet a termékek nevével, egyet pedig az eladási adatokkal. Ezután egy egyszerű oszlopdiagramon ábrázoljuk az eredményt.</p>
+                            <div class="code-snippet">
+# 1. Adatvektorok létrehozása
+termekek &lt;- c("Laptop", "Egér", "Monitor")
+eladasok &lt;- c(80, 150, 110)
+
+# 2. Diagram készítése
+barplot(eladasok, names.arg = termekek)
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-[#4ECDC4] mb-4 text-center">Az eredmény</h3>
+                             <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+
+    </div>
+
+    <script>
+        const processLabels = (labels) => {
+            const wrapAfter = 16;
+            return labels.map(label => {
+                if (label.length <= wrapAfter) {
+                    return label;
+                }
+                
+                const words = label.split(' ');
+                let lines = [];
+                let currentLine = '';
+
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length > wrapAfter) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                });
+                if (currentLine) {
+                    lines.push(currentLine.trim());
+                }
+                return lines;
+            });
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const sharedChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#3A3A3A',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            }
+        };
+
+        const energeticPalette = {
+            red: '#FF6B6B',
+            teal: '#4ECDC4',
+            blue: '#45B7D1',
+            yellow: '#FED766',
+        };
+        
+        new Chart(document.getElementById('dataTypesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Vektor (pl. számsor)', 'Numerikus (szám)', 'Karakter (szöveg)', 'Logikai (igaz/hamis)'],
+                datasets: [{
+                    label: 'Adattípusok',
+                    data: [40, 25, 25, 10],
+                    backgroundColor: [
+                        energeticPalette.teal,
+                        energeticPalette.blue,
+                        energeticPalette.yellow,
+                        energeticPalette.red
+                    ],
+                    borderColor: '#F9F9F9',
+                    borderWidth: 4
+                }]
+            },
+            options: sharedChartOptions
+        });
+
+        new Chart(document.getElementById('salesChart'), {
+            type: 'bar',
+            data: {
+                labels: processLabels(['Laptop', 'Egér', 'Monitor']),
+                datasets: [{
+                    label: 'Eladott darabok',
+                    data: [80, 150, 110],
+                    backgroundColor: [
+                        energeticPalette.red,
+                        energeticPalette.teal,
+                        energeticPalette.blue
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                ...sharedChartOptions,
+                plugins: {
+                     ...sharedChartOptions.plugins,
+                     legend: {
+                         display: false
+                     }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e0e0e0'
+                        },
+                        ticks: {
+                           color: '#3A3A3A'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                         ticks: {
+                           color: '#3A3A3A'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

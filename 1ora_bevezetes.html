@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bevezetés az R Programozásba</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page, vertical scrolling layout is used to guide the user through the fundamentals of R in a logical, step-by-step manner. The structure progresses from high-level concepts ('What is R?') to core mechanics ('Objects', 'Assignment'), and finally to practical examples ('Syntax', 'Data Types'). This linear flow is ideal for beginners. Interactivity is introduced via 'runnable' code snippets (JS-powered) to actively engage the user and reinforce learning, making abstract syntax rules tangible and immediately understandable. -->
+    <!-- Visualization & Content Choices: Report Info: Basic R concepts (OO nature, syntax, assignment). Goal: Teach fundamentals. Viz/Presentation: Interactive code blocks (HTML/CSS/JS) are used instead of static images or complex charts. Interaction: Users click a 'Run' button to see the simulated output of R code, demonstrating concepts like assignment and function calls directly. Justification: This method provides a hands-on learning feel without requiring a live R kernel, making it highly effective for teaching syntax. Data types are presented in a JS-powered tabbed view to organize information cleanly and prevent overwhelming the user. Library/Method: Vanilla JS for all interactions. CONFIRM: NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        .code-block {
+            background-color: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+        .output-block {
+            background-color: #2D3748;
+            color: #F7FAFC;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+        .run-button {
+            background-color: #3B82F6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .run-button:hover {
+            background-color: #2563EB;
+        }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .tab-button.active {
+            background-color: #4A5568;
+            color: white;
+        }
+        .tab-button:not(.active) {
+            background-color: #E2E8F0;
+            color: #4A5568;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-3xl font-bold text-gray-800">Bevezetés az R Programozásba</h1>
+            <p class="text-gray-500 mt-1">Ismerkedj meg a statisztikai programozás alapjaival interaktívan.</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
+        
+        <section id="what-is-r">
+            <h2 class="text-2xl font-semibold text-gray-700 border-b pb-2">Mi az az R?</h2>
+            <div class="mt-4 text-lg text-gray-600 leading-relaxed space-y-4">
+                <p>Az R egy programozási nyelv és szoftverkörnyezet, amelyet kifejezetten statisztikai számításokhoz és adatok vizualizációjához fejlesztettek ki. A statisztikusok, adatelemzők és kutatók körében rendkívül népszerű eszköz, mivel hatalmas csomagkönyvtárral rendelkezik, amely szinte bármilyen adatelemzési feladatra kínál megoldást, az egyszerű grafikonok készítésétől a komplex gépi tanulási modellekig.</p>
+                <p>Ezen az oldalon az R legalapvetőbb koncepcióival ismerkedhetsz meg, hogy szilárd alapot kapj a további tanuláshoz.</p>
+            </div>
+        </section>
+
+        <section id="objects">
+            <h2 class="text-2xl font-semibold text-gray-700 border-b pb-2">Az R Lelkivilága: Minden egy Objektum</h2>
+            <div class="mt-4 text-lg text-gray-600 leading-relaxed space-y-4">
+                <p>Az R nyelv egyik legfontosabb alapelve, hogy benne <strong class="font-semibold text-gray-800">minden egy objektum</strong>. Ez azt jelenti, hogy egy egyszerű szám, egy szöveg, egy adathalmaz (táblázat) vagy akár egy komplett statisztikai modell is objektumként létezik a memóriában.</p>
+                <p>Gondolj az objektumokra úgy, mint címkézett dobozokra. A dobozba beleteszel valamilyen értéket (pl. egy számot), és adsz neki egy nevet (címkét), amivel később hivatkozhatsz rá. Ez a "doboz" az objektum, a "címke" a változó neve, a "tartalma" pedig az értéke. Ez a szemlélet teszi az R-t rendkívül rugalmassá és következetessé.</p>
+            </div>
+        </section>
+
+        <section id="syntax">
+            <h2 class="text-2xl font-semibold text-gray-700 border-b pb-2">Alapvető Szintaxis és Értékadás</h2>
+            <p class="mt-4 text-lg text-gray-600 leading-relaxed">
+                Most nézzük meg, hogyan kelthetjük életre ezeket az objektumokat a gyakorlatban. Az interaktív példákban kattints a "Futtatás" gombra, hogy lásd a kód eredményét!
+            </p>
+
+            <article class="mt-8">
+                <h3 class="text-xl font-semibold text-gray-700">Értékadás: Az objektumok létrehozása</h3>
+                <p class="mt-2 text-gray-600">Az értékadás az a folyamat, amikor egy értéket egy változóhoz (objektumhoz) rendelünk. Az R-ben erre a leggyakrabban a `<-` operátort használjuk, ami egy balra mutató nyílra hasonlít. Bár az `=` is működik, a `<-` használata konvencionális és jobban olvashatóvá teszi a kódot.</p>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-500">PÉLDA 1: Szám hozzárendelése</p>
+                        <button class="run-button" onclick="runCode('assign-num-output', '`szam` nevű objektum létrehozva.\nÉrtéke: 42')">Futtatás ▶</button>
+                    </div>
+                    <div class="code-block mt-2">szam <- 42</div>
+                    <div id="assign-num-output" class="output-block"></div>
+                </div>
+                <div class="mt-6">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-500">PÉLDA 2: Szöveg hozzárendelése</p>
+                        <button class="run-button" onclick="runCode('assign-text-output', '`udvozlet` nevű objektum létrehozva.\nÉrtéke: \"Helló, R világ!\"')">Futtatás ▶</button>
+                    </div>
+                    <div class="code-block mt-2">udvozlet <- "Helló, R világ!"</div>
+                    <div id="assign-text-output" class="output-block"></div>
+                </div>
+            </article>
+
+            <article class="mt-12">
+                <h3 class="text-xl font-semibold text-gray-700">Objektumok használata</h3>
+                <p class="mt-2 text-gray-600">Miután létrehoztunk egy objektumot, a nevével hivatkozhatunk rá, és műveleteket végezhetünk vele.</p>
+                <div class="mt-4">
+                     <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-500">PÉLDA 3: Művelet objektumokkal</p>
+                        <button class="run-button" onclick="runCode('op-output', 'Létrehozom az `a` és `b` objektumokat.\nÖsszeadom őket: 10 + 5\n[1] 15')">Futtatás ▶</button>
+                    </div>
+                    <div class="code-block mt-2">
+a <- 10
+b <- 5
+a + b
+                    </div>
+                    <div id="op-output" class="output-block"></div>
+                </div>
+            </article>
+            
+            <article class="mt-12">
+                <h3 class="text-xl font-semibold text-gray-700">Függvényhívások</h3>
+                <p class="mt-2 text-gray-600">Az R ereje a beépített és telepíthető függvények ezreiben rejlik. A függvényeket a nevükkel, majd zárójelben az argumentumaikkal (az adatokkal, amiken dolgoznak) hívjuk meg.</p>
+                <div class="mt-4">
+                     <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-gray-500">PÉLDA 4: Gyökvonás</p>
+                        <button class="run-button" onclick="runCode('func-output', 'Meghívom a `sqrt()` függvényt a 81 argumentummal.\n[1] 9')">Futtatás ▶</button>
+                    </div>
+                    <div class="code-block mt-2">sqrt(81)</div>
+                    <div id="func-output" class="output-block"></div>
+                </div>
+            </article>
+
+        </section>
+
+        <section id="data-types">
+            <h2 class="text-2xl font-semibold text-gray-700 border-b pb-2">Gyakori Objektumtípusok</h2>
+            <p class="mt-4 text-lg text-gray-600 leading-relaxed">
+                Az R számos különböző típusú objektumot ismer, amelyek más-más típusú adatok tárolására alkalmasak. Az alábbiakban a leggyakoribb alapvető típusokat mutatjuk be. Kattints a gombokra a példák megtekintéséhez!
+            </p>
+            <div class="mt-6">
+                <div class="flex space-x-2 border-b">
+                    <button id="tab-btn-vector" class="tab-button active" onclick="switchTab('vector')">Vektor</button>
+                    <button id="tab-btn-numeric" class="tab-button" onclick="switchTab('numeric')">Numerikus</button>
+                    <button id="tab-btn-character" class="tab-button" onclick="switchTab('character')">Karakter</button>
+                    <button id="tab-btn-logical" class="tab-button" onclick="switchTab('logical')">Logikai</button>
+                </div>
+                <div class="mt-4 p-4 bg-gray-50 rounded-b-lg">
+                    <div id="tab-content-vector" class="tab-content active">
+                        <h4 class="text-lg font-semibold text-gray-800">Vektor (vector)</h4>
+                        <p class="mt-2 text-gray-600">A vektor a legalapvetőbb R adatszerkezet. Egyszerűen egy egynemű elemekből álló sorozat (pl. csak számok vagy csak szövegek). A `c()` (combine) függvénnyel hozhatjuk létre.</p>
+                        <div class="code-block mt-3">
+# Számokból álló vektor
+homersekletek <- c(22.5, 24.1, 19.8, 21.0)
+
+# Szövegekből álló vektor
+napok <- c("hétfő", "kedd", "szerda")
+                        </div>
+                    </div>
+                    <div id="tab-content-numeric" class="tab-content">
+                        <h4 class="text-lg font-semibold text-gray-800">Numerikus (numeric)</h4>
+                        <p class="mt-2 text-gray-600">Számok tárolására szolgál, lehet egész vagy tizedestört. Technikailag egy egyelemű numerikus vektor.</p>
+                        <div class="code-block mt-3">
+eletkor <- 35
+pi_erteke <- 3.14159
+                        </div>
+                    </div>
+                    <div id="tab-content-character" class="tab-content">
+                        <h4 class="text-lg font-semibold text-gray-800">Karakter (character)</h4>
+                        <p class="mt-2 text-gray-600">Szöveges adatok tárolására használatos. A szöveget mindig idézőjelek (`"` vagy `'`) közé kell tenni.</p>
+                        <div class="code-block mt-3">
+nev <- "Kiss Pista"
+varos <- 'Budapest'
+                        </div>
+                    </div>
+                    <div id="tab-content-logical" class="tab-content">
+                        <h4 class="text-lg font-semibold text-gray-800">Logikai (logical)</h4>
+                        <p class="mt-2 text-gray-600">Két értéket vehet fel: `TRUE` (igaz) vagy `FALSE` (hamis). Összehasonlítások és feltételek eredményeként jön létre.</p>
+                        <div class="code-block mt-3">
+nagyobb_mint_tiz <- 15 > 10  # Eredménye: TRUE
+van_jogositvanya <- FALSE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="text-center pt-8 border-t text-gray-500">
+            <p>Ez egy interaktív bemutató az R alapjairól. A felfedezéshez és a komolyabb munkához telepítsd az <a href="https://www.r-project.org/" target="_blank" class="text-blue-600 hover:underline">R</a>-t és az <a href="https://www.rstudio.com/" target="_blank" class="text-blue-600 hover:underline">RStudio</a>-t!</p>
+        </footer>
+
+    </main>
+
+    <script>
+        function runCode(outputId, resultText) {
+            const outputElement = document.getElementById(outputId);
+            outputElement.innerText = ''; 
+            let i = 0;
+            const speed = 15; 
+            
+            function typeWriter() {
+                if (i < resultText.length) {
+                    outputElement.innerHTML += resultText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+            
+            typeWriter();
+        }
+
+        function switchTab(tabName) {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+            document.getElementById(`tab-content-${tabName}`).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('vector');
+        });
+
+    </script>
+</body>
+</html>
