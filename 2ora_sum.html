@@ -1,0 +1,302 @@
+<!-- Chosen Palette: Warm & inviting -->
+<!-- Application Structure Plan: The SPA is designed as an educational dashboard. A sticky navigation bar allows users to jump between thematic sections: Vectors, Matrices, and Factors. Each section provides a concise explanation, a relevant interactive visualization (bar chart for vectors, heatmap for matrices, donut chart for factors), and a key takeaway. The final 'Interactive Comparison' section acts as a dynamic summary tool. Users can click buttons for each data type to instantly see its primary use case, dimensions, and creation function in a central display panel. This structure facilitates a linear learning path followed by an interactive reinforcement activity, enhancing user understanding and retention more effectively than a static report. -->
+<!-- Visualization & Content Choices: 
+- Vector Data -> Goal: Compare -> Viz: Bar Chart -> Interaction: Hover tooltips -> Justification: Clearly shows magnitudes of 1D data. (Chart.js, Canvas, NO SVG).
+- Matrix Data -> Goal: Organize/Relationships -> Viz: WebGL Heatmap -> Interaction: Hover tooltips showing value at [row, col] -> Justification: Effectively visualizes 2D data patterns, more engaging than a table. (Plotly.js, WebGL, NO SVG).
+- Factor Data -> Goal: Inform (Proportions) -> Viz: Donut Chart -> Interaction: Hover tooltips with category percentages -> Justification: Ideal for showing the composition of categorical data. (Chart.js, Canvas, NO SVG).
+- Comparison -> Goal: Organize/Compare -> Method: Interactive HTML/JS Panel -> Interaction: Button clicks update content -> Justification: Active user engagement for direct comparison improves learning. (Vanilla JS, NO SVG/Mermaid). -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="hu" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktív R Adattípusok Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F1E4C3;
+            color: #564236;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #C6A982;
+            border-color: #C6A982;
+        }
+        .active-nav {
+            color: #C6A982;
+            border-color: #C6A982;
+        }
+        .interactive-btn.active {
+            background-color: #8B6F4E;
+            color: #F1E4C3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#564236] text-[#F1E4C3] p-4 text-center sticky top-0 z-10 shadow-lg">
+        <h1 class="text-3xl font-bold">R Adattípusok: Interaktív Dashboard</h1>
+    </header>
+
+    <nav class="bg-[#8B6F4E] text-[#F1E4C3] p-3 sticky top-[68px] z-10 shadow-md">
+        <ul class="container mx-auto flex justify-center space-x-4 md:space-x-8">
+            <li><a href="#vectors" class="nav-link py-2 border-b-2 border-transparent">Vektorok</a></li>
+            <li><a href="#matrices" class="nav-link py-2 border-b-2 border-transparent">Mátrixok</a></li>
+            <li><a href="#factors" class="nav-link py-2 border-b-2 border-transparent">Faktorok</a></li>
+            <li><a href="#comparison" class="nav-link py-2 border-b-2 border-transparent">Összehasonlítás</a></li>
+        </ul>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="vectors" class="py-12 scroll-mt-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Vektorok: Az Adatsorok Alapja</h2>
+                    <p class="mb-4">A vektor az R legalapvetőbb adatstruktúrája, egy egydimenziós, rendezett elemekből álló sorozat. A legfontosabb szabály, hogy egy vektor minden elemének azonos típusúnak (pl. numerikus, karakter) kell lennie. Ez a homogenitás teszi lehetővé a rendkívül gyors, ún. "vektorizált" műveleteket, ahol egyetlen paranccsal a vektor összes elemén elvégezhetünk egy számítást.</p>
+                    <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                        <h4 class="font-semibold text-lg">Kulcsfogalom: Vektorizáció</h4>
+                        <p class="text-sm">Ahelyett, hogy ciklusonként haladnánk végig az elemeken, az `eredmenyek * 1.1` parancs azonnal megnöveli az összes értéket 10%-kal. Ez az R egyik legnagyobb erőssége.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold text-center mb-2">Havi Eredmények</h3>
+                    <div class="chart-container">
+                        <canvas id="vectorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="matrices" class="py-12 scroll-mt-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                 <div class="bg-white p-6 rounded-lg shadow-lg order-last md:order-first">
+                    <h3 class="text-xl font-semibold text-center mb-2">Régiós Teljesítmény Hőtérkép</h3>
+                    <div class="chart-container" id="matrixChart"></div>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Mátrixok: Adatok Két Dimenzióban</h2>
+                    <p class="mb-4">A mátrix a vektor természetes kiterjesztése két dimenzióra: sorokra és oszlopokra. A vektorhoz hasonlóan a mátrixok is homogének, tehát minden elemük azonos típusú kell, hogy legyen. Ideálisak táblázatos adatok, például képpontok, kísérleti eredmények vagy korrelációs táblák tárolására. Az elemekre a `[sor, oszlop]` szintaxissal hivatkozhatunk.</p>
+                     <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                        <h4 class="font-semibold text-lg">Kulcsfogalom: Indexelés</h4>
+                        <p class="text-sm">A `teljesitmeny[2, 3]` parancs pontosan a 2. sorban és a 3. oszlopban lévő értéket adja vissza. Ezzel precízen célozhatunk adatpontokat a táblázatban.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="factors" class="py-12 scroll-mt-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Faktorok: Kategorikus Adatok Mesterei</h2>
+                    <p class="mb-4">A faktorok speciális vektorok, amelyeket kategorikus adatok (pl. nem, iskolai végzettség, termékértékelés) tárolására optimalizáltak. Bár szöveges címkéket, ún. "szinteket" (levels) látunk, az R a háttérben egész számokként tárolja őket. Ez a kettős természet rendkívül hatékonnyá teszi őket a statisztikai modellezésben és a csoportosítási feladatokban.</p>
+                    <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                        <h4 class="font-semibold text-lg">Kulcsfogalom: Szintek (Levels)</h4>
+                        <p class="text-sm">Egy "Alacsony, Közepes, Magas" faktornak meghatározott sorrendje lehet, ami lehetővé teszi a helyes modellezést. Az R tudni fogja, hogy "Magas" > "Alacsony".</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold text-center mb-2">Felhasználói Elégedettség</h3>
+                    <div class="chart-container">
+                        <canvas id="factorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="py-12 scroll-mt-32 text-center">
+            <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Interaktív Összehasonlítás</h2>
+            <p class="max-w-2xl mx-auto mb-8">Válasszon egy adattípust, hogy megtekintse annak legfontosabb jellemzőit és tipikus felhasználási területét!</p>
+            <div class="flex justify-center space-x-4 mb-8">
+                <button data-type="vector" class="interactive-btn px-6 py-3 bg-white rounded-lg shadow-md font-semibold text-[#8B6F4E] transition duration-300 hover:bg-[#C6A982]">Vektor</button>
+                <button data-type="matrix" class="interactive-btn px-6 py-3 bg-white rounded-lg shadow-md font-semibold text-[#8B6F4E] transition duration-300 hover:bg-[#C6A982]">Mátrix</button>
+                <button data-type="factor" class="interactive-btn px-6 py-3 bg-white rounded-lg shadow-md font-semibold text-[#8B6F4E] transition duration-300 hover:bg-[#C6A982]">Faktor</button>
+            </div>
+            <div id="details-panel" class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-2xl transition-all duration-500 min-h-[250px] flex flex-col justify-center">
+                <h3 id="details-title" class="text-2xl font-bold text-[#8B6F4E] mb-3">Válasszon egy adattípust!</h3>
+                <p id="details-usecase" class="text-lg mb-2"><strong class="font-semibold">Felhasználás:</strong> <span class="font-normal"></span></p>
+                <p id="details-dim" class="text-lg mb-2"><strong class="font-semibold">Dimenziók:</strong> <span class="font-normal"></span></p>
+                <p id="details-type" class="text-lg mb-2"><strong class="font-semibold">Adattípus:</strong> <span class="font-normal"></span></p>
+                <p id="details-func" class="text-lg"><strong class="font-semibold">Létrehozás:</strong> <code class="bg-[#F1E4C3] px-2 py-1 rounded text-[#564236]"></code></p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const palette = {
+                lightCream: '#F1E4C3',
+                tan: '#C6A982',
+                brown: '#8B6F4E',
+                darkBrown: '#564236'
+            };
+
+            const defaultTooltipConfig = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const vectorCtx = document.getElementById('vectorChart').getContext('2d');
+            new Chart(vectorCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Már', 'Ápr', 'Máj', 'Jún'],
+                    datasets: [{
+                        label: 'Eredmény (ezer Ft)',
+                        data: [120, 190, 300, 250, 420, 380],
+                        backgroundColor: palette.tan,
+                        borderColor: palette.brown,
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: { ...defaultTooltipConfig, responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { ...defaultTooltipConfig.plugins, legend: { display: false } } }
+            });
+            
+            const matrixData = [{
+                z: [[5, 8, 6], [9, 4, 7], [6, 7, 5], [8, 9, 8]],
+                x: ['Projekt A', 'Projekt B', 'Projekt C'],
+                y: ['Észak', 'Dél', 'Kelet', 'Nyugat'],
+                type: 'heatmapgl',
+                colorscale: [[0, palette.lightCream], [1, palette.darkBrown]]
+            }];
+            const matrixLayout = { autosize: true, margin: { l: 50, r: 20, b: 70, t: 20 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)'};
+            Plotly.newPlot('matrixChart', matrixData, matrixLayout, {responsive: true});
+
+            const factorCtx = document.getElementById('factorChart').getContext('2d');
+            new Chart(factorCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Elégedett', 'Semleges', 'Elégedetlen'],
+                    datasets: [{
+                        label: 'Visszajelzések',
+                        data: [185, 90, 25],
+                        backgroundColor: [palette.tan, palette.lightCream, palette.brown],
+                        borderColor: palette.darkBrown,
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: { ...defaultTooltipConfig, responsive: true, maintainAspectRatio: false, plugins: { ...defaultTooltipConfig.plugins, legend: { position: 'bottom' } } }
+            });
+
+            const comparisonData = {
+                vector: {
+                    title: "Vektor",
+                    usecase: "Egyszerű, egydimenziós adatsorok, pl. hőmérsékleti adatok, részvényárak.",
+                    dim: "1D (Egydimenziós)",
+                    type: "Homogén (minden elem azonos típusú)",
+                    func: "c(1, 2, 3)"
+                },
+                matrix: {
+                    title: "Mátrix",
+                    usecase: "Táblázatos, kétdimenziós adatok, pl. képpontok, korrelációs táblák.",
+                    dim: "2D (Kétdimenziós: sorok és oszlopok)",
+                    type: "Homogén (minden elem azonos típusú)",
+                    func: "matrix(1:6, nrow=2)"
+                },
+                factor: {
+                    title: "Faktor",
+                    usecase: "Kategorikus adatok, pl. 'igen'/'nem' válaszok, végzettségi szintek.",
+                    dim: "1D (Egydimenziós)",
+                    type: "Kategorikus (szöveges címkékkel ellátott számok)",
+                    func: "factor(c('a', 'b', 'a'))"
+                }
+            };
+            const buttons = document.querySelectorAll('.interactive-btn');
+            const detailsPanel = document.getElementById('details-panel');
+            const titleEl = document.getElementById('details-title');
+            const usecaseEl = document.querySelector('#details-usecase span');
+            const dimEl = document.querySelector('#details-dim span');
+            const typeEl = document.querySelector('#details-type span');
+            const funcEl = document.querySelector('#details-func code');
+
+            function updateDetails(type) {
+                const data = comparisonData[type];
+                detailsPanel.style.transform = 'scale(0.95)';
+                detailsPanel.style.opacity = '0';
+                setTimeout(() => {
+                    titleEl.textContent = data.title;
+                    usecaseEl.textContent = data.usecase;
+                    dimEl.textContent = data.dim;
+                    typeEl.textContent = data.type;
+                    funcEl.textContent = data.func;
+                    detailsPanel.style.transform = 'scale(1)';
+                    detailsPanel.style.opacity = '1';
+                }, 200);
+
+                buttons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.type === type) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    updateDetails(button.dataset.type);
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active-nav');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
