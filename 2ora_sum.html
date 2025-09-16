@@ -1,9 +1,8 @@
 <!-- Chosen Palette: Warm & inviting -->
-<!-- Application Structure Plan: The SPA is designed as an educational dashboard. A sticky navigation bar allows users to jump between thematic sections: Vectors, Matrices, and Factors. Each section provides a concise explanation, a relevant interactive visualization (bar chart for vectors, heatmap for matrices, donut chart for factors), and a key takeaway. The final 'Interactive Comparison' section acts as a dynamic summary tool. Users can click buttons for each data type to instantly see its primary use case, dimensions, and creation function in a central display panel. This structure facilitates a linear learning path followed by an interactive reinforcement activity, enhancing user understanding and retention more effectively than a static report. -->
+<!-- Application Structure Plan: The SPA is designed as an educational dashboard. A sticky navigation bar allows users to jump between thematic sections. Each section provides an explanation, an interactive visualization, and now includes a Gemini API-powered feature to generate real-world examples with code snippets. The final 'Interactive Comparison' section acts as a dynamic summary tool. This structure facilitates a linear learning path, enriched with AI-generated practical examples, followed by an interactive reinforcement activity to enhance user understanding. -->
 <!-- Visualization & Content Choices: 
-- Vector Data -> Goal: Compare -> Viz: Bar Chart -> Interaction: Hover tooltips -> Justification: Clearly shows magnitudes of 1D data. (Chart.js, Canvas, NO SVG).
-- Matrix Data -> Goal: Organize/Relationships -> Viz: WebGL Heatmap -> Interaction: Hover tooltips showing value at [row, col] -> Justification: Effectively visualizes 2D data patterns, more engaging than a table. (Plotly.js, WebGL, NO SVG).
-- Factor Data -> Goal: Inform (Proportions) -> Viz: Donut Chart -> Interaction: Hover tooltips with category percentages -> Justification: Ideal for showing the composition of categorical data. (Chart.js, Canvas, NO SVG).
+- Vector/Matrix/Factor Data -> Goal: Compare/Organize/Inform -> Viz: Bar/Heatmap/Donut Charts -> Interaction: Hover tooltips -> Justification: Standard, effective visualizations for each data type. (Chart.js, Plotly.js, NO SVG).
+- Gemini Example Generator -> Goal: Inform/Apply -> Method: Interactive HTML/JS Panel with API Call -> Interaction: Button click triggers Gemini API to generate a title, explanation, and code snippet for a real-world use case. -> Justification: Connects abstract concepts to practical application, significantly enhancing the educational value. (Gemini API, Vanilla JS, NO SVG/Mermaid).
 - Comparison -> Goal: Organize/Compare -> Method: Interactive HTML/JS Panel -> Interaction: Button clicks update content -> Justification: Active user engagement for direct comparison improves learning. (Vanilla JS, NO SVG/Mermaid). -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
@@ -55,6 +54,28 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
+        .gemini-btn {
+            background: linear-gradient(45deg, #C6A982, #8B6F4E);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .gemini-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px -2px rgba(0,0,0,0.2);
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #8B6F4E;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -79,10 +100,12 @@
                 <div>
                     <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Vektorok: Az Adatsorok Alapja</h2>
                     <p class="mb-4">A vektor az R legalapvetőbb adatstruktúrája, egy egydimenziós, rendezett elemekből álló sorozat. A legfontosabb szabály, hogy egy vektor minden elemének azonos típusúnak (pl. numerikus, karakter) kell lennie. Ez a homogenitás teszi lehetővé a rendkívül gyors, ún. "vektorizált" műveleteket, ahol egyetlen paranccsal a vektor összes elemén elvégezhetünk egy számítást.</p>
-                    <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                    <div class="bg-white/50 p-4 rounded-lg shadow-inner mb-6">
                         <h4 class="font-semibold text-lg">Kulcsfogalom: Vektorizáció</h4>
                         <p class="text-sm">Ahelyett, hogy ciklusonként haladnánk végig az elemeken, az `eredmenyek * 1.1` parancs azonnal megnöveli az összes értéket 10%-kal. Ez az R egyik legnagyobb erőssége.</p>
                     </div>
+                    <button class="gemini-btn text-white font-bold py-2 px-4 rounded-lg w-full" data-type="Vector">✨ Mutass egy valós példát!</button>
+                    <div id="gemini-result-vector" class="mt-4 hidden bg-white/70 border-l-4 border-[#C6A982] p-4 rounded-lg shadow-md"></div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h3 class="text-xl font-semibold text-center mb-2">Havi Eredmények</h3>
@@ -96,16 +119,17 @@
         <section id="matrices" class="py-12 scroll-mt-32">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                  <div class="bg-white p-6 rounded-lg shadow-lg order-last md:order-first">
-                    <h3 class="text-xl font-semibold text-center mb-2">Régiós Teljesítmény Hőtérkép</h3>
                     <div class="chart-container" id="matrixChart"></div>
                 </div>
                 <div>
                     <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Mátrixok: Adatok Két Dimenzióban</h2>
                     <p class="mb-4">A mátrix a vektor természetes kiterjesztése két dimenzióra: sorokra és oszlopokra. A vektorhoz hasonlóan a mátrixok is homogének, tehát minden elemük azonos típusú kell, hogy legyen. Ideálisak táblázatos adatok, például képpontok, kísérleti eredmények vagy korrelációs táblák tárolására. Az elemekre a `[sor, oszlop]` szintaxissal hivatkozhatunk.</p>
-                     <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                     <div class="bg-white/50 p-4 rounded-lg shadow-inner mb-6">
                         <h4 class="font-semibold text-lg">Kulcsfogalom: Indexelés</h4>
                         <p class="text-sm">A `teljesitmeny[2, 3]` parancs pontosan a 2. sorban és a 3. oszlopban lévő értéket adja vissza. Ezzel precízen célozhatunk adatpontokat a táblázatban.</p>
                     </div>
+                    <button class="gemini-btn text-white font-bold py-2 px-4 rounded-lg w-full" data-type="Matrix">✨ Mutass egy valós példát!</button>
+                    <div id="gemini-result-matrix" class="mt-4 hidden bg-white/70 border-l-4 border-[#C6A982] p-4 rounded-lg shadow-md"></div>
                 </div>
             </div>
         </section>
@@ -115,10 +139,12 @@
                 <div>
                     <h2 class="text-3xl font-bold text-[#8B6F4E] mb-4">Faktorok: Kategorikus Adatok Mesterei</h2>
                     <p class="mb-4">A faktorok speciális vektorok, amelyeket kategorikus adatok (pl. nem, iskolai végzettség, termékértékelés) tárolására optimalizáltak. Bár szöveges címkéket, ún. "szinteket" (levels) látunk, az R a háttérben egész számokként tárolja őket. Ez a kettős természet rendkívül hatékonnyá teszi őket a statisztikai modellezésben és a csoportosítási feladatokban.</p>
-                    <div class="bg-white/50 p-4 rounded-lg shadow-inner">
+                    <div class="bg-white/50 p-4 rounded-lg shadow-inner mb-6">
                         <h4 class="font-semibold text-lg">Kulcsfogalom: Szintek (Levels)</h4>
                         <p class="text-sm">Egy "Alacsony, Közepes, Magas" faktornak meghatározott sorrendje lehet, ami lehetővé teszi a helyes modellezést. Az R tudni fogja, hogy "Magas" > "Alacsony".</p>
                     </div>
+                    <button class="gemini-btn text-white font-bold py-2 px-4 rounded-lg w-full" data-type="Factor">✨ Mutass egy valós példát!</button>
+                    <div id="gemini-result-factor" class="mt-4 hidden bg-white/70 border-l-4 border-[#C6A982] p-4 rounded-lg shadow-md"></div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h3 class="text-xl font-semibold text-center mb-2">Felhasználói Elégedettség</h3>
@@ -195,10 +221,18 @@
                 z: [[5, 8, 6], [9, 4, 7], [6, 7, 5], [8, 9, 8]],
                 x: ['Projekt A', 'Projekt B', 'Projekt C'],
                 y: ['Észak', 'Dél', 'Kelet', 'Nyugat'],
-                type: 'heatmapgl',
-                colorscale: [[0, palette.lightCream], [1, palette.darkBrown]]
+                type: 'heatmap',
+                colorscale: [[0, palette.tan], [1, palette.darkBrown]],
+                hoverongaps: false
             }];
-            const matrixLayout = { autosize: true, margin: { l: 50, r: 20, b: 70, t: 20 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)'};
+            const matrixLayout = { 
+                autosize: true, 
+                margin: { l: 50, r: 20, b: 70, t: 40 }, 
+                paper_bgcolor: 'rgba(0,0,0,0)', 
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: palette.darkBrown },
+                title: { text: 'Régiós Teljesítmény', x: 0.5 }
+            };
             Plotly.newPlot('matrixChart', matrixData, matrixLayout, {responsive: true});
 
             const factorCtx = document.getElementById('factorChart').getContext('2d');
@@ -219,28 +253,11 @@
             });
 
             const comparisonData = {
-                vector: {
-                    title: "Vektor",
-                    usecase: "Egyszerű, egydimenziós adatsorok, pl. hőmérsékleti adatok, részvényárak.",
-                    dim: "1D (Egydimenziós)",
-                    type: "Homogén (minden elem azonos típusú)",
-                    func: "c(1, 2, 3)"
-                },
-                matrix: {
-                    title: "Mátrix",
-                    usecase: "Táblázatos, kétdimenziós adatok, pl. képpontok, korrelációs táblák.",
-                    dim: "2D (Kétdimenziós: sorok és oszlopok)",
-                    type: "Homogén (minden elem azonos típusú)",
-                    func: "matrix(1:6, nrow=2)"
-                },
-                factor: {
-                    title: "Faktor",
-                    usecase: "Kategorikus adatok, pl. 'igen'/'nem' válaszok, végzettségi szintek.",
-                    dim: "1D (Egydimenziós)",
-                    type: "Kategorikus (szöveges címkékkel ellátott számok)",
-                    func: "factor(c('a', 'b', 'a'))"
-                }
+                vector: { title: "Vektor", usecase: "Egyszerű, egydimenziós adatsorok, pl. hőmérsékleti adatok, részvényárak.", dim: "1D (Egydimenziós)", type: "Homogén (minden elem azonos típusú)", func: "c(1, 2, 3)" },
+                matrix: { title: "Mátrix", usecase: "Táblázatos, kétdimenziós adatok, pl. képpontok, korrelációs táblák.", dim: "2D (Kétdimenziós: sorok és oszlopok)", type: "Homogén (minden elem azonos típusú)", func: "matrix(1:6, nrow=2)" },
+                factor: { title: "Faktor", usecase: "Kategorikus adatok, pl. 'igen'/'nem' válaszok, végzettségi szintek.", dim: "1D (Egydimenziós)", type: "Kategorikus (szöveges címkékkel ellátott számok)", func: "factor(c('a', 'b', 'a'))" }
             };
+
             const buttons = document.querySelectorAll('.interactive-btn');
             const detailsPanel = document.getElementById('details-panel');
             const titleEl = document.getElementById('details-title');
@@ -263,19 +280,11 @@
                     detailsPanel.style.opacity = '1';
                 }, 200);
 
-                buttons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.type === type) {
-                        btn.classList.add('active');
-                    }
-                });
+                buttons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.interactive-btn[data-type="${type}"]`).classList.add('active');
             }
             
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    updateDetails(button.dataset.type);
-                });
-            });
+            buttons.forEach(button => button.addEventListener('click', () => updateDetails(button.dataset.type)));
 
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section');
@@ -283,8 +292,7 @@
             window.addEventListener('scroll', () => {
                 let current = '';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 200) {
+                    if (pageYOffset >= section.offsetTop - 200) {
                         current = section.getAttribute('id');
                     }
                 });
@@ -296,7 +304,86 @@
                     }
                 });
             });
+
+            async function callGeminiAPI(dataType) {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                const systemPrompt = `As an expert R programming tutor, generate a simple and clear real-world example for using an R ${dataType}. The audience is a beginner. Provide a short title for the scenario, a concise one-paragraph explanation of why this data type is suitable for this data, and a simple, runnable R code snippet to demonstrate it. Respond in Hungarian.`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: systemPrompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "title": { "type": "STRING" },
+                                "explanation": { "type": "STRING" },
+                                "code": { "type": "STRING" }
+                            },
+                            required: ["title", "explanation", "code"]
+                        }
+                    }
+                };
+
+                for (let i = 0; i < 3; i++) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`API call failed with status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        
+                        if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
+                            try {
+                                return JSON.parse(result.candidates[0].content.parts[0].text);
+                            } catch (parseError) {
+                                throw new Error("Failed to parse LLM response as JSON.");
+                            }
+                        } else {
+                            throw new Error("Invalid response structure from API.");
+                        }
+                    } catch (error) {
+                        if (i === 2) throw error;
+                        await new Promise(res => setTimeout(res, 1000 * (i + 1)));
+                    }
+                }
+            }
+            
+            document.querySelectorAll('.gemini-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const dataType = e.target.dataset.type;
+                    const resultContainer = document.getElementById(`gemini-result-${dataType.toLowerCase()}`);
+                    
+                    e.target.disabled = true;
+                    resultContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div></div>';
+                    resultContainer.style.display = 'block';
+
+                    try {
+                        const response = await callGeminiAPI(dataType);
+                        resultContainer.innerHTML = `
+                            <h4 class="font-bold text-lg text-[#8B6F4E]">${response.title}</h4>
+                            <p class="mt-2 text-sm">${response.explanation}</p>
+                            <pre class="bg-[#564236] text-white p-3 rounded-md mt-3 text-sm overflow-x-auto"><code>${response.code}</code></pre>
+                        `;
+                    } catch (error) {
+                        console.error("Gemini API Error:", error);
+                        resultContainer.innerHTML = `<p class="text-red-700 font-semibold">Hiba történt a példa generálása során.</p><p class="text-xs text-gray-600 mt-1">${error.message}. Kérjük, próbálja újra később.</p>`;
+                    } finally {
+                         e.target.disabled = false;
+                    }
+                });
+            });
+
         });
     </script>
 </body>
 </html>
+
