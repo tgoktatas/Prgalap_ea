@@ -1,8 +1,8 @@
 <!-- Chosen Palette: Warm & inviting -->
-<!-- Application Structure Plan: The SPA is designed as an educational dashboard. A sticky navigation bar allows users to jump between thematic sections. Each section provides an explanation, an interactive visualization, and now includes a Gemini API-powered feature to generate real-world examples with code snippets. The final 'Interactive Comparison' section acts as a dynamic summary tool. This structure facilitates a linear learning path, enriched with AI-generated practical examples, followed by an interactive reinforcement activity to enhance user understanding. -->
+<!-- Application Structure Plan: The SPA is designed as an educational dashboard. A sticky navigation bar allows users to jump between thematic sections. Each section provides an explanation, an interactive visualization, and now includes a simulated API feature to generate real-world examples with code snippets. The final 'Interactive Comparison' section acts as a dynamic summary tool. This structure facilitates a linear learning path, enriched with practical examples, followed by an interactive reinforcement activity to enhance user understanding. -->
 <!-- Visualization & Content Choices: 
 - Vector/Matrix/Factor Data -> Goal: Compare/Organize/Inform -> Viz: Bar/Heatmap/Donut Charts -> Interaction: Hover tooltips -> Justification: Standard, effective visualizations for each data type. (Chart.js, Plotly.js, NO SVG).
-- Gemini Example Generator -> Goal: Inform/Apply -> Method: Interactive HTML/JS Panel with API Call -> Interaction: Button click triggers Gemini API to generate a title, explanation, and code snippet for a real-world use case. -> Justification: Connects abstract concepts to practical application, significantly enhancing the educational value. (Gemini API, Vanilla JS, NO SVG/Mermaid).
+- Hardcoded Example Generator -> Goal: Inform/Apply -> Method: Interactive HTML/JS Panel with simulated API Call -> Interaction: Button click simulates a fetch and displays a hardcoded title, explanation, and code snippet for a real-world use case. -> Justification: Connects abstract concepts to practical application reliably, without external dependencies. (Vanilla JS, NO SVG/Mermaid).
 - Comparison -> Goal: Organize/Compare -> Method: Interactive HTML/JS Panel -> Interaction: Button clicks update content -> Justification: Active user engagement for direct comparison improves learning. (Vanilla JS, NO SVG/Mermaid). -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 <!DOCTYPE html>
@@ -58,9 +58,13 @@
             background: linear-gradient(45deg, #C6A982, #8B6F4E);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .gemini-btn:hover {
+        .gemini-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px -2px rgba(0,0,0,0.2);
+        }
+        .gemini-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         .loader {
             width: 48px;
@@ -305,79 +309,54 @@
                 });
             });
 
-            async function callGeminiAPI(dataType) {
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-                
-                const systemPrompt = `As an expert R programming tutor, generate a simple and clear real-world example for using an R ${dataType}. The audience is a beginner. Provide a short title for the scenario, a concise one-paragraph explanation of why this data type is suitable for this data, and a simple, runnable R code snippet to demonstrate it. Respond in Hungarian.`;
-
-                const payload = {
-                    contents: [{ parts: [{ text: systemPrompt }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "title": { "type": "STRING" },
-                                "explanation": { "type": "STRING" },
-                                "code": { "type": "STRING" }
-                            },
-                            required: ["title", "explanation", "code"]
-                        }
-                    }
-                };
-
-                for (let i = 0; i < 3; i++) {
-                    try {
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`API call failed with status: ${response.status}`);
-                        }
-
-                        const result = await response.json();
-                        
-                        if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
-                            try {
-                                return JSON.parse(result.candidates[0].content.parts[0].text);
-                            } catch (parseError) {
-                                throw new Error("Failed to parse LLM response as JSON.");
-                            }
-                        } else {
-                            throw new Error("Invalid response structure from API.");
-                        }
-                    } catch (error) {
-                        if (i === 2) throw error;
-                        await new Promise(res => setTimeout(res, 1000 * (i + 1)));
-                    }
+            const hardcodedExamples = {
+                Vector: {
+                    title: "Webshop Kosár Elemzés",
+                    explanation: "Tegyük fel, hogy egy webshopban az utolsó öt vásárló kosárértékét szeretnénk tárolni. Mivel minden érték numerikus (pénzösszeg), és egy egyszerű listáról van szó, a vektor a tökéletes választás. Gyorsan és egyszerűen számolhatunk vele átlagot, vagy adhatunk hozzá új elemeket.",
+                    code: `# Utolsó 5 vásárlás értéke forintban\nkosar_ertekek <- c(12500, 8900, 21300, 5400, 15000)\n\n# Átlagos kosárérték kiszámítása\natlag_ertek <- mean(kosar_ertekek)\nprint(paste("Az átlagos kosárérték:", atlag_ertek, "Ft"))`
+                },
+                Matrix: {
+                    title: "Diákok Teszteredményeinek Tárolása",
+                    explanation: "Képzeljünk el egy osztályt, ahol a diákok három különböző tantárgyból írnak tesztet. Az eredményeket egy táblázatban szeretnénk rögzíteni, ahol a sorok a diákokat, az oszlopok pedig a tantárgyakat jelölik. Mivel minden adat numerikus (pontszám), a mátrix ideális a kétdimenziós, homogén adatok tárolására.",
+                    code: `# 3 diák eredményei 3 tantárgyból\neredmenyek_data <- c(88, 92, 76, 95, 85, 91, 78, 88, 82)\nteszt_eredmenyek <- matrix(eredmenyek_data, nrow = 3, byrow = TRUE)\n\n# Sor- és oszlopnevek hozzáadása\nrownames(teszt_eredmenyek) <- c("Anna", "Béla", "Cecília")\ncolnames(teszt_eredmenyek) <- c("Matek", "Fizika", "Kémia")\nprint("Teszteredmények:")\nprint(teszt_eredmenyek)`
+                },
+                Factor: {
+                    title: "Vevői Visszajelzések Kategorizálása",
+                    explanation: "Egy felmérésben a vevők 'Elégedett', 'Semleges' vagy 'Elégedetlen' kategóriákba sorolhatták a szolgáltatást. Ezek nem csak egyszerű szövegek, hanem egy belső rangsorral (szinttel) rendelkező kategóriák. A faktor adattípus pontosan erre való: hatékonyan tárolja a kategóriákat és azok sorrendjét, ami elengedhetetlen a statisztikai modellezéshez.",
+                    code: `# Vevői visszajelzések gyűjteménye\nvisszajelzesek <- c("Elégedett", "Semleges", "Elégedett", "Elégedetlen", "Semleges")\n\n# Faktor létrehozása meghatározott sorrenddel\nelegedettseg_faktor <- factor(visszajelzesek,\n                               levels = c("Elégedetlen", "Semleges", "Elégedett"),\n                               ordered = TRUE)\n\nprint("Visszajelzések faktorként:")\nprint(elegedettseg_faktor)\nsummary(elegedettseg_faktor)`
                 }
+            };
+
+            function getHardcodedExample(dataType) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve(hardcodedExamples[dataType]);
+                    }, 1200); // Simulate network delay
+                });
             }
             
             document.querySelectorAll('.gemini-btn').forEach(button => {
                 button.addEventListener('click', async (e) => {
-                    const dataType = e.target.dataset.type;
+                    const buttonEl = e.target;
+                    const dataType = buttonEl.dataset.type;
                     const resultContainer = document.getElementById(`gemini-result-${dataType.toLowerCase()}`);
                     
-                    e.target.disabled = true;
+                    buttonEl.disabled = true;
                     resultContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div></div>';
                     resultContainer.style.display = 'block';
 
                     try {
-                        const response = await callGeminiAPI(dataType);
+                        const response = await getHardcodedExample(dataType);
                         resultContainer.innerHTML = `
                             <h4 class="font-bold text-lg text-[#8B6F4E]">${response.title}</h4>
                             <p class="mt-2 text-sm">${response.explanation}</p>
                             <pre class="bg-[#564236] text-white p-3 rounded-md mt-3 text-sm overflow-x-auto"><code>${response.code}</code></pre>
                         `;
                     } catch (error) {
-                        console.error("Gemini API Error:", error);
-                        resultContainer.innerHTML = `<p class="text-red-700 font-semibold">Hiba történt a példa generálása során.</p><p class="text-xs text-gray-600 mt-1">${error.message}. Kérjük, próbálja újra később.</p>`;
+                        console.error("Hardcoded example error:", error);
+                        resultContainer.innerHTML = `<p class="text-red-700 font-semibold">Hiba történt a példa betöltése során. Kérjük, frissítse az oldalt.</p>`;
                     } finally {
-                         e.target.disabled = false;
+                         buttonEl.disabled = false;
                     }
                 });
             });
