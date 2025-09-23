@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Data Structures: Array vs. Data Frame</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #E0E1DD;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .lang-btn {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+            border-radius: 0.375rem;
+        }
+        .lang-btn.active, .lang-btn:hover {
+            opacity: 1;
+            border-color: #415A77;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="text-[#0D1B2A]">
+
+    <div class="fixed top-4 right-4 z-50 flex space-x-2 bg-white/70 backdrop-blur-sm p-1 rounded-lg shadow-md">
+        <button id="lang-hu" class="lang-btn" onclick="setLanguage('hu')">
+            <span class="text-2xl px-1">🇭🇺</span>
+        </button>
+        <button id="lang-en" class="lang-btn" onclick="setLanguage('en')">
+            <span class="text-2xl px-1">🇬🇧</span>
+        </button>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0D1B2A] mb-2" data-lang-key="mainTitle">R Adatstruktúrák</h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-[#415A77]" data-lang-key="mainSubtitle">Array vs. Data Frame: A Helyes Eszköz Kiválasztása</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-[#1B263B]" data-lang-key="mainDescription">Az R `Array` és `Data Frame` közötti alapvető különbség megértése kulcsfontosságú a hatékony, tiszta és eredményes kód írásához. Ez az útmutató bemutatja alapvető jellemzőiket és ideális felhasználási területeiket.</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <section class="md:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#0D1B2A] mb-4 text-center" data-lang-key="divideTitle">Az Alapvető Különbség: Homogén vs. Heterogén</h3>
+                <p class="text-center text-lg text-[#1B263B] mb-6 max-w-4xl mx-auto" data-lang-key="divideDescription">Lényegében az Array és a Data Frame közötti választás egyetlen elven múlik: az adattípusok konzisztenciáján. Az Array-ek megkövetelik, hogy minden elem azonos típusú legyen, míg a Data Frame-eket a különböző típusú oszlopok kezelésére tervezték.</p>
+                <div class="flex flex-col md:flex-row justify-center items-stretch space-y-4 md:space-y-0 md:space-x-8">
+                    <div class="flex-1 text-center border-4 border-dashed border-[#778DA9] rounded-xl p-6">
+                        <p class="text-5xl mb-2">🔢</p>
+                        <h4 class="text-xl font-bold text-[#415A77]" data-lang-key="arrayTitle">Array: Homogén</h4>
+                        <p class="text-md text-[#1B263B] mt-2" data-lang-key="arrayDescription">Többdimenziós rács, ahol minden egyes elemnek pontosan azonos adattípusúnak kell lennie (pl. mind numerikus vagy mind karakter).</p>
+                    </div>
+                    <div class="flex-1 text-center border-4 border-dashed border-[#778DA9] rounded-xl p-6">
+                        <p class="text-5xl mb-2">📋</p>
+                        <h4 class="text-xl font-bold text-[#415A77]" data-lang-key="dfTitle">Data Frame: Heterogén</h4>
+                        <p class="text-md text-[#1B263B] mt-2" data-lang-key="dfDescription">Kétdimenziós táblázat, ahol a különböző oszlopok különböző adattípusokat tartalmazhatnak (pl. karakter, numerikus és logikai egy objektumban).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 flex flex-col">
+                <h3 class="text-2xl font-bold text-[#0D1B2A] mb-2" data-lang-key="arrayPowerTitle">Az `Array`: Az N-dimenziós Matematika Motorja</h3>
+                <p class="text-md text-[#1B263B] mb-4 flex-grow" data-lang-key="arrayPowerDescription">Az Array az R megoldása az adatok több dimenzióban történő tárolására. Míg egy mátrixnak két dimenziója van, egy array-nek lehet egy, kettő vagy sokkal több, ami hatékony eszközzé teszi az egységes adatokon végzett komplex matematikai és statisztikai műveletekhez.</p>
+                <div class="chart-container">
+                    <canvas id="arrayUseChart"></canvas>
+                </div>
+                <div class="mt-4 text-center bg-[#E0E1DD] p-4 rounded-lg">
+                    <h4 class="font-bold text-[#415A77]" data-lang-key="bestFor">Legjobb a következőkhöz:</h4>
+                    <p class="text-sm text-[#0D1B2A]" data-lang-key="arrayBestFor">Tudományos számítások, képfeldolgozás (pixeladatok), szimulációk és haladó lineáris algebra, ahol az adatok numerikusak és többdimenziósak.</p>
+                </div>
+            </section>
+            
+            <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 flex flex-col">
+                <h3 class="text-2xl font-bold text-[#0D1B2A] mb-2" data-lang-key="dfBackboneTitle">A `Data Frame`: Az Elemzés Gerince</h3>
+                <p class="text-md text-[#1B263B] mb-4 flex-grow" data-lang-key="dfBackboneDescription">A data frame a leggyakoribb és legfontosabb adatstruktúra az adatelemzéshez R-ben. Hatékonyan tárol táblázatos adatokat, tükrözve egy táblázatkezelő vagy adatbázis-tábla szerkezetét, ami intuitívvá és sokoldalúvá teszi a valós adathalmazokhoz.</p>
+                <div class="chart-container">
+                    <canvas id="dataFrameUseChart"></canvas>
+                </div>
+                <div class="mt-4 text-center bg-[#E0E1DD] p-4 rounded-lg">
+                    <h4 class="font-bold text-[#415A77]" data-lang-key="bestFor">Legjobb a következőkhöz:</h4>
+                    <p class="text-sm text-[#0D1B2A]" data-lang-key="dfBestFor">Felmérések eredményeinek, kísérleti adatoknak, ügyfélnyilvántartásoknak és gyakorlatilag bármilyen, megfigyelésekkel (sorok) és vegyes típusú változókkal (oszlopok) rendelkező adathalmaz tárolására.</p>
+                </div>
+            </section>
+
+            <section class="md:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#0D1B2A] mb-4 text-center" data-lang-key="coercionTitle">A Típus-kényszerítés Csapdája: A Homogenitás Veszélye</h3>
+                <p class="text-center text-lg text-[#1B263B] mb-6 max-w-4xl mx-auto" data-lang-key="coercionDescription">Mivel egy `Array`-nek homogénnek kell lennie, az R az összes elemet a legrugalmasabb adattípusra kényszeríti (coerce), ha megpróbáljuk őket keverni. Ez gyakran rejtett hibákhoz vezet, ahol a számok akaratlanul karakterláncokká alakulnak, megakadályozva a matematikai műveleteket.</p>
+                <div class="flex flex-col md:flex-row justify-around items-center">
+                    <div class="text-center p-4">
+                        <h4 class="font-bold text-xl text-[#1B263B] mb-2" data-lang-key="initialData">Kezdeti Adatok</h4>
+                        <div class="text-left space-y-2">
+                           <div class="bg-[#E0E1DD] p-2 rounded font-mono text-sm">c(10, 20, 30) <span class="text-[#778DA9] font-sans italic ml-2" data-lang-key="numeric">[Numerikus]</span></div>
+                           <div class="bg-[#E0E1DD] p-2 rounded font-mono text-sm">"Apple" <span class="text-[#778DA9] font-sans italic ml-2" data-lang-key="character">[Karakter]</span></div>
+                        </div>
+                    </div>
+                    <div class="text-5xl text-[#415A77] font-sans transform my-4 md:my-0 md:rotate-0 rotate-90">&rarr;</div>
+                    <div class="text-center p-4">
+                         <h4 class="font-bold text-xl text-red-600 mb-2" data-lang-key="resultInArray">Eredmény egy Array-ben</h4>
+                         <div class="bg-red-100 p-2 rounded font-mono text-sm text-red-800">array(c(10, 20, 30, "Apple"))</div>
+                         <div class="bg-[#E0E1DD] mt-2 p-2 rounded font-mono text-sm">"10" "20" "30" "Apple" <span class="text-red-600 font-sans italic ml-2" data-lang-key="allCharacter">[Mind Karakter]</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="md:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h3 class="text-2xl font-bold text-[#0D1B2A] mb-6 text-center" data-lang-key="guideTitle">Döntési Útmutató: Melyik Struktúrát Használjuk?</h3>
+                <div class="flex flex-col space-y-4">
+                    <div class="border-2 border-[#778DA9] rounded-lg p-4">
+                        <p class="font-semibold text-lg text-[#415A77]" data-lang-key="q1">1. Milyen jellegűek az adatai?</p>
+                    </div>
+                    <div class="self-center text-3xl text-[#778DA9]">&darr;</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-[#E0E1DD] rounded-lg p-4">
+                            <p class="font-bold text-center" data-lang-key="q1a">Egy többdimenziós rács AZONOS adattípusú elemekkel (pl. csak számok)?</p>
+                        </div>
+                        <div class="bg-[#E0E1DD] rounded-lg p-4">
+                            <p class="font-bold text-center" data-lang-key="q1b">Egy táblázat KÜLÖNBÖZŐ adattípusú oszlopokkal (pl. nevek, korok, pontszámok)?</p>
+                        </div>
+                    </div>
+                    <div class="self-center text-3xl text-[#778DA9]">&darr;</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-100 text-blue-800 border-2 border-blue-500 rounded-lg p-6 text-center">
+                            <p class="font-extrabold text-2xl" data-lang-key="useArray">Használjon `Array`-t</p>
+                            <p class="mt-2" data-lang-key="useArrayDesc">Ideális a matematikai precizitáshoz és teljesítményhez egységes, többdimenziós adatokkal.</p>
+                        </div>
+                        <div class="bg-green-100 text-green-800 border-2 border-green-600 rounded-lg p-6 text-center">
+                            <p class="font-extrabold text-2xl" data-lang-key="useDF">Használjon `Data Frame`-et</p>
+                            <p class="mt-2" data-lang-key="useDFDesc">A rugalmas, szabványos választás a legtöbb adatelemzési feladathoz, amelyek valós, táblázatos adatokat érintenek.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let arrayChart, dataFrameChart;
+        let currentLanguage = 'hu';
+
+        const translations = {
+            hu: {
+                mainTitle: "R Adatstruktúrák",
+                mainSubtitle: "Array vs. Data Frame: A Helyes Eszköz Kiválasztása",
+                mainDescription: "Az R `Array` és `Data Frame` közötti alapvető különbség megértése kulcsfontosságú a hatékony, tiszta és eredményes kód írásához. Ez az útmutató bemutatja alapvető jellemzőiket és ideális felhasználási területeiket.",
+                divideTitle: "Az Alapvető Különbség: Homogén vs. Heterogén",
+                divideDescription: "Lényegében az Array és a Data Frame közötti választás egyetlen elven múlik: az adattípusok konzisztenciáján. Az Array-ek megkövetelik, hogy minden elem azonos típusú legyen, míg a Data Frame-eket a különböző típusú oszlopok kezelésére tervezték.",
+                arrayTitle: "Array: Homogén",
+                arrayDescription: "Többdimenziós rács, ahol minden egyes elemnek pontosan azonos adattípusúnak kell lennie (pl. mind numerikus vagy mind karakter).",
+                dfTitle: "Data Frame: Heterogén",
+                dfDescription: "Kétdimenziós táblázat, ahol a különböző oszlopok különböző adattípusokat tartalmazhatnak (pl. karakter, numerikus és logikai egy objektumban).",
+                arrayPowerTitle: "Az `Array`: Az N-dimenziós Matematika Motorja",
+                arrayPowerDescription: "Az Array az R megoldása az adatok több dimenzióban történő tárolására. Míg egy mátrixnak két dimenziója van, egy array-nek lehet egy, kettő vagy sokkal több, ami hatékony eszközzé teszi az egységes adatokon végzett komplex matematikai és statisztikai műveletekhez.",
+                bestFor: "Legjobb a következőkhöz:",
+                arrayBestFor: "Tudományos számítások, képfeldolgozás (pixeladatok), szimulációk és haladó lineáris algebra, ahol az adatok numerikusak és többdimenziósak.",
+                dfBackboneTitle: "A `Data Frame`: Az Elemzés Gerince",
+                dfBackboneDescription: "A data frame a leggyakoribb és legfontosabb adatstruktúra az adatelemzéshez R-ben. Hatékonyan tárol táblázatos adatokat, tükrözve egy táblázatkezelő vagy adatbázis-tábla szerkezetét, ami intuitívvá és sokoldalúvá teszi a valós adathalmazokhoz.",
+                dfBestFor: "Felmérések eredményeinek, kísérleti adatoknak, ügyfélnyilvántartásoknak és gyakorlatilag bármilyen, megfigyelésekkel (sorok) és vegyes típusú változókkal (oszlopok) rendelkező adathalmaz tárolására.",
+                coercionTitle: "A Típus-kényszerítés Csapdája: A Homogenitás Veszélye",
+                coercionDescription: "Mivel egy `Array`-nek homogénnek kell lennie, az R az összes elemet a legrugalmasabb adattípusra kényszeríti (coerce), ha megpróbáljuk őket keverni. Ez gyakran rejtett hibákhoz vezet, ahol a számok akaratlanul karakterláncokká alakulnak, megakadályozva a matematikai műveleteket.",
+                initialData: "Kezdeti Adatok",
+                numeric: "[Numerikus]",
+                character: "[Karakter]",
+                resultInArray: "Eredmény egy Array-ben",
+                allCharacter: "[Mind Karakter]",
+                guideTitle: "Döntési Útmutató: Melyik Struktúrát Használjuk?",
+                q1: "1. Milyen jellegűek az adatai?",
+                q1a: "Egy többdimenziós rács AZONOS adattípusú elemekkel (pl. csak számok)?",
+                q1b: "Egy táblázat KÜLÖNBÖZŐ adattípusú oszlopokkal (pl. nevek, korok, pontszámok)?",
+                useArray: "Használjon `Array`-t",
+                useArrayDesc: "Ideális a matematikai precizitáshoz és teljesítményhez egységes, többdimenziós adatokkal.",
+                useDF: "Használjon `Data Frame`-et",
+                useDFDesc: "A rugalmas, szabványos választás a legtöbb adatelemzési feladathoz, amelyek valós, táblázatos adatokat érintenek.",
+                chartArrayTitle: "Array Alkalmassága Számítási Feladatokban",
+                chartArrayLabel: "Alkalmasság a feladathoz",
+                chartArrayLabels: ["Képfeldolgozás", "3D Szimulációk", "Tenzor Műveletek", "Időjárási Modellek"],
+                chartDFTitle: "Tipikus Oszlopösszetétel Data Frame-ekben",
+                chartDFLabel: "Oszlop Típus",
+                chartDFLabels: ["Numerikus", "Karakter", "Faktor", "Logikai", "Dátum"]
+            },
+            en: {
+                mainTitle: "R Data Structures",
+                mainSubtitle: "Array vs. Data Frame: Choosing the Right Tool",
+                mainDescription: "Understanding the fundamental difference between R's `Array` and `Data Frame` is crucial for writing efficient, clean, and effective code. This guide breaks down their core characteristics and ideal use cases.",
+                divideTitle: "The Fundamental Divide: Homogeneous vs. Heterogeneous",
+                divideDescription: "At its core, the choice between an Array and a Data Frame comes down to one principle: data type consistency. Arrays demand that all elements be of the same type, while Data Frames are built to handle columns of different types.",
+                arrayTitle: "Array: Homogeneous",
+                arrayDescription: "A multi-dimensional grid where every single element must be of the exact same data type (e.g., all numeric or all character).",
+                dfTitle: "Data Frame: Heterogeneous",
+                dfDescription: "A two-dimensional table where different columns can hold different data types (e.g., character, numeric, and logical in one object).",
+                arrayPowerTitle: "The `Array`: Powering N-Dimensional Math",
+                arrayPowerDescription: "Arrays are R's solution for storing data in multiple dimensions. While a matrix has two dimensions, an array can have one, two, or many more, making it a powerful tool for complex mathematical and statistical operations on uniform data.",
+                bestFor: "Best For:",
+                arrayBestFor: "Scientific computing, image processing (pixel data), simulations, and advanced linear algebra where data is numeric and multi-dimensional.",
+                dfBackboneTitle: "The `Data Frame`: Backbone of Analysis",
+                dfBackboneDescription: "The data frame is the most common and important data structure for data analysis in R. It efficiently stores tabular data, mirroring the structure of a spreadsheet or a database table, making it intuitive and versatile for real-world datasets.",
+                dfBestFor: "Storing survey results, experimental data, customer records, and virtually any dataset with observations (rows) and variables (columns) of mixed types.",
+                coercionTitle: "The Coercion Trap: A Pitfall of Homogeneity",
+                coercionDescription: "Because an `Array` must be homogeneous, R will force (coerce) all elements into the most flexible data type if you try to mix them. This often leads to silent errors, where numbers are unintentionally converted to character strings, preventing mathematical operations.",
+                initialData: "Initial Data",
+                numeric: "[Numeric]",
+                character: "[Character]",
+                resultInArray: "Result in an Array",
+                allCharacter: "[All Character]",
+                guideTitle: "Decision Guide: Which Structure to Use?",
+                q1: "1. What is the nature of your data?",
+                q1a: "A multi-dimensional grid of the SAME data type (e.g., all numbers)?",
+                q1b: "A table with columns of DIFFERENT data types (e.g., names, ages, scores)?",
+                useArray: "Use an `Array`",
+                useArrayDesc: "Ideal for mathematical rigor and performance with uniform, multi-dimensional data.",
+                useDF: "Use a `Data Frame`",
+                useDFDesc: "The flexible, standard choice for most data analysis tasks involving real-world, tabular data.",
+                chartArrayTitle: "Array Suitability in Computational Tasks",
+                chartArrayLabel: "Suitability for Task",
+                chartArrayLabels: ["Image Processing", "3D Simulations", "Tensor Operations", "Weather Models"],
+                chartDFTitle: "Typical Column Composition in Data Frames",
+                chartDFLabel: "Column Type",
+                chartDFLabels: ["Numeric", "Character", "Factor", "Logical", "Date"]
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.dataset.langKey;
+                if (translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            const langData = translations[currentLanguage];
+
+            // Update Array Chart
+            if (arrayChart) {
+                arrayChart.options.plugins.title.text = langData.chartArrayTitle;
+                arrayChart.data.datasets[0].label = langData.chartArrayLabel;
+                arrayChart.data.labels = langData.chartArrayLabels;
+                arrayChart.update();
+            }
+
+            // Update Data Frame Chart
+            if (dataFrameChart) {
+                dataFrameChart.options.plugins.title.text = langData.chartDFTitle;
+                dataFrameChart.data.datasets[0].label = langData.chartDFLabel;
+                dataFrameChart.data.labels = langData.chartDFLabels;
+                dataFrameChart.update();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltipTitleCallback = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                return Array.isArray(label) ? label.join(' ') : label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            const primaryColor = '#415A77';
+            const secondaryColor = '#778DA9';
+            const textColor = '#0D1B2A';
+            const gridColor = '#E0E1DD';
+            
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = textColor;
+
+            arrayChart = new Chart(document.getElementById('arrayUseChart'), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [95, 90, 85, 80],
+                        backgroundColor: primaryColor,
+                        borderColor: '#1B263B',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    ...tooltipTitleCallback,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: gridColor }, ticks: { padding: 10 } },
+                        x: { grid: { display: false }, ticks: { padding: 10 } }
+                    },
+                    plugins: {
+                        ...tooltipTitleCallback.plugins,
+                        legend: { display: false },
+                        title: { display: true, text: '', font: { size: 16, weight: '600' }, padding: { top: 0, bottom: 20 } }
+                    }
+                }
+            });
+
+            dataFrameChart = new Chart(document.getElementById('dataFrameUseChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [40, 25, 15, 10, 10],
+                        backgroundColor: [primaryColor, secondaryColor, '#1B263B', '#5A7D9A', '#9EB3C9'],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    ...tooltipTitleCallback,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        ...tooltipTitleCallback.plugins,
+                        legend: { position: 'bottom', labels: { padding: 20 } },
+                        title: { display: true, text: '', font: { size: 16, weight: '600' }, padding: { top: 0, bottom: 20 } }
+                    }
+                }
+            });
+
+            setLanguage(currentLanguage);
+        });
+    </script>
+</body>
+</html>
