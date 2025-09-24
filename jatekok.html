@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Csapatépítő Játékok Fiatal Felnőtteknek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Stílus a görgetősávnak a füleknél */
+        .tabs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        .tabs-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .tabs-container::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 6px;
+        }
+        .tab-active {
+            border-color: #3b82f6 !important;
+            background-color: #3b82f6 !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+        .game-content-container h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+         .game-content-container h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .game-content-container ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .game-content-container ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .game-content-container li {
+            margin-bottom: 0.5rem;
+        }
+        .game-content-container p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body {
+                font-size: 10pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block;
+            }
+            .game-content-wrapper {
+                display: block !important;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .game-print-section {
+                page-break-after: always;
+            }
+            .game-print-section:last-child {
+                page-break-after: auto;
+            }
+            h1, h2, h3, h4 {
+                color: #000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-6 no-print">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Csapatépítő Játékok</h1>
+            <p class="text-slate-600 mt-2">Ismerkedést segítő, minimális eszközigényű játékok fiatal felnőtteknek</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="sticky top-0 bg-slate-100 py-4 z-10 no-print">
+            <div id="tabs-container" class="tabs-container flex space-x-2 overflow-x-auto pb-2">
+                <!-- Tabs will be injected here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <main id="content-container">
+             <!-- Game content will be injected here -->
+        </main>
+        
+        <!-- Print Button -->
+        <div class="mt-8 text-center no-print">
+            <button onclick="window.print()" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-200 inline-flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Összes Játék Nyomtatása
+            </button>
+        </div>
+
+        <!-- Hidden content for printing -->
+        <div id="print-content-container" class="print-only">
+            <!-- All game contents for printing will be injected here -->
+        </div>
+
+    </div>
+
+    <script>
+        const games = [
+            {
+                id: 'ket-igazsag',
+                title: 'Két igazság, egy hazugság',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a klasszikus jégtörő játék a kontrollált önfeltárás kiváló eszköze. A résztvevők maguk döntik el, milyen mélységű információt osztanak meg magukról, miközben a játékos keret – a hazugság kitalálása – oldja a személyes történetmesélés esetleges feszültségét. Fejleszti a figyelmet, a megfigyelőkészséget és a kritikus gondolkodást.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A játékvezető elmagyarázza a szabályokat: mindenki gondoljon magáról három rövid, egy mondatos állítást. Ezek közül kettő legyen igaz, egy pedig hamis.</li>
+                        <li>A résztvevők kapnak 2-3 perc felkészülési időt. A játékvezető bátorítsa őket, hogy legyenek kreatívak.</li>
+                        <li>Sorban haladva mindenki elmondja a maga három állítását. A többiek tippelnek, melyik a hamis.</li>
+                        <li>Egy gyors szavazás után a mesélő felfedi az igazságot, és megoszthat egy-két mondatot a valós történetek hátteréről.</li>
+                    </ol>
+                    <h4>Példa a játékvezetőtől</h4>
+                    <p><i>„1. Gyerekkoromban megnyertem egy szavalóversenyt. 2. Folyékonyan beszélek klingonul. 3. Egyszer lefutottam egy félmaratont jelmezben.”</i> Ez segít beállítani a hangulatot.</p>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Nincs.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 25-35 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'emberi-csomo',
+                title: 'Emberi csomó',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a játék a közös problémamegoldás fizikai metaforája. A résztvevőknek szavak nélkül vagy kevés szóval kell összehangolniuk a mozgásukat. A fizikai közelség gyorsan oldja a kezdeti távolságtartást.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A 17 fős csoportot osszuk két kisebb, 8 és 9 fős alcsoportra.</li>
+                        <li>Az alcsoportok tagjai álljanak szoros körbe, és nyújtsák be a kezüket a kör közepe felé.</li>
+                        <li>Mindenki fogja meg egy-egy másik ember jobb, majd bal kezét, de ne a közvetlen szomszédjáét.</li>
+                        <li>A feladat: a kialakult emberi csomót anélkül kibogozni, hogy a kézfogásokat elengednék. A cél, hogy a végén egy kört alkossanak.</li>
+                    </ol>
+                    <h4>Facilitátori tippek</h4>
+                    <ul>
+                        <li>Hangsúlyozzuk a biztonságot: a mozgás legyen lassú és óvatos.</li>
+                        <li>Lehet teljesen némán is játszani, ami a non-verbális jelekre helyezi a hangsúlyt.</li>
+                    </ul>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Nincs.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 15-20 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'kozos-tortenet',
+                title: 'Közös történet',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a játék az improvizációs színház „igen, és...” alapelvére épül. Mindenki hozzátesz a közös alkotáshoz, elfogadva és továbbépítve az előtte szóló gondolatát. Fejleszti a kreativitást és az aktív hallgatás képességét.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A teljes csoport kényelmesen körben ül.</li>
+                        <li>A játékvezető megad egy kezdőmondatot (pl. „Egy borús keddi napon a buszmegállóban valami furcsára lettem figyelmes...”).</li>
+                        <li>Körben haladva, mindenki hozzátesz pontosan egy mondatot a történethez.</li>
+                        <li>A legfontosabb szabály, hogy nem lehet tagadni az előző mondatot, csak folytatni kell.</li>
+                    </ol>
+                    <h4>Variációk</h4>
+                    <ul>
+                        <li><strong>Fordított történet:</strong> A játékvezető az utolsó mondatot adja meg, és a csoportnak kell kitalálnia az odavezető utat.</li>
+                        <li><strong>Beépített szavak:</strong> Mindenki kap egy-egy szót (pl. „gemkapocs”), amit bele kell szőnie a saját mondatába.</li>
+                    </ul>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Nincs.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 15-25 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'ki-vagyok-en',
+                title: 'Ki vagyok én? (Híres párok)',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a népszerű barkochba-variáció a deduktív gondolkodásra és a célzott kommunikációra épül. A humor garantált, ami hatékonyan oldja a gátlásokat. A játékosnak a többiek visszajelzéseiből kell rájönnie a saját „identitására”.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A játékvezető 17 cetlire híres párok tagjainak neveit írja fel (8 pár + 1 önálló karakter).</li>
+                        <li>Mindenki homlokára ragasztunk egy cetlit anélkül, hogy látná.</li>
+                        <li>A cél: kitalálni, ki vagyok én, majd megtalálni a páromat a csoportban.</li>
+                        <li>A játékosok szabadon sétálhatnak és csak eldöntendő (igen/nem) kérdéseket tehetnek fel egymásnak.</li>
+                    </ol>
+                    <h4>Karakter javaslatok (13 pár)</h4>
+                    <ul>
+                        <li>Shrek / Fiona</li>
+                        <li>Barbie / Ken</li>
+                        <li>Pókember / Mary Jane (MJ)</li>
+                        <li>Joker / Harley Quinn</li>
+                        <li>Han Solo / Csubakka</li>
+                        <li>Wall-E / Éva</li>
+                        <li>Mickey egér / Minnie egér</li>
+                        <li>Spongyabob / Patrik</li>
+                        <li>Tom / Jerry</li>
+                        <li>Woody / Buzz Lightyear</li>
+                        <li>Rómeó / Júlia</li>
+                        <li>Bonnie / Clyde</li>
+                        <li>Walter White / Jesse Pinkman</li>
+                    </ul>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Öntapadós jegyzetlapok, tollak.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 20-30 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'mi-a-kozos',
+                title: 'Mi a közös bennünk?',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a játék célzottan a közös pontok, a hasonlóságok keresésére fókuszál. Segít lebontani az előítéleteket, és egy mélyebb, közös tapasztalatokon alapuló egységet teremt. Erősíti az empátiát és a csoporthoz tartozás érzését.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A csoportot osszuk 4-5 fős alcsoportokra.</li>
+                        <li>A feladat, hogy 10 perc alatt gyűjtsenek minél több olyan dolgot, ami a kiscsoport <strong>minden egyes tagjára</strong> igaz.</li>
+                        <li>A triviális dolgok nem számítanak. A cél, hogy mélyebbre ássanak: közös élmények, kedvelt dolgok, álmok, szokások.</li>
+                        <li>Az idő lejárta után minden kiscsoport megosztja a 3-4 legérdekesebb közös pontját a többiekkel.</li>
+                    </ol>
+                    <h4>Variáció</h4>
+                    <p>A játék indulhat párokban, majd két pár összeáll egy négyfős csoporttá, és olyan pontokat keresnek, ami mind a négyükre igaz. Ez folytatódhat, amíg az egész csoport egyben nem lesz.</p>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Opcionálisan papír és toll.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 25-35 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'lakatlan-sziget',
+                title: 'Lakatlan sziget',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a klasszikus szituációs játék a konfliktuskezelés, az érveléstechnika és a konszenzuskeresés kiváló gyakorlóterepe. A résztvevőknek egyéni preferenciáikat kell ütköztetniük a csoport érdekeivel.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li><strong>Kerettörténet:</strong> A csoport hajótörést szenvedett, és egy süllyedő mentőcsónakban vannak. Tárgyakat kell kidobniuk a túléléshez.</li>
+                        <li><strong>Egyéni fázis (5 perc):</strong> Mindenki írjon fel 5 tárgyat, amit a legfontosabbnak tart a túléléshez.</li>
+                        <li><strong>Kiscsoportos fázis (10 perc):</strong> 4-5 fős csoportokban egyezzenek meg egy közös, 5 tárgyból álló listában.</li>
+                        <li><strong>Nagycsoportos fázis (15 perc):</strong> Az egész csapatnak meg kell egyeznie egyetlen, végső, 5 tárgyból álló listában.</li>
+                        <li><strong>Feldolgozás:</strong> Beszéljék meg, hogyan élték meg a döntéshozatali folyamatot.</li>
+                    </ol>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Opcionálisan papír és toll.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 30-40 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'sullyedo-leghajo',
+                title: 'Süllyedő léghajó',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>A „Lakatlan sziget” absztraktabb változata, amely nem tárgyakra, hanem a csoport számára fontos értékekre fókuszál. Segít tudatosítani és megvitatni a közösség alapértékeit.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li><strong>Kerettörténet:</strong> A csapat egy süllyedő léghajón utazik. Értékeket szimbolizáló ballasztzsákokat kell kidobniuk.</li>
+                        <li><strong>Értékek kiosztása:</strong> Mindenki kap egy cetlit egy értékkel (pl. őszinteség, humor, biztonság).</li>
+                        <li><strong>Döntési körök:</strong> Körönként a csoportnak meg kell egyeznie, melyik értéket „dobják ki”.</li>
+                        <li><strong>Érvelés:</strong> Mielőtt döntenek, az a személy, akinek az értékét ki akarják dobni, 1 percet kap, hogy megvédje azt.</li>
+                        <li>A játék addig folytatódik, amíg csak 3-5 legfontosabb érték marad.</li>
+                    </ol>
+                    <h4>Érték javaslatok (20+)</h4>
+                    <ul>
+                        <li>Őszinteség, Humor, Biztonság, Kreativitás, Tudás, Összetartás, Fejlődés, Empátia, Igazságosság, Szabadság, Tisztelet, Felelősségvállalás, Bátorság, Optimizmus, Türelem, Megbízhatóság, Nyitottság, Stabilitás, Kalandvágy, Együttérzés, Jóindulat, Hagyományok</li>
+                    </ul>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Opcionálisan előre megírt cetlik értékekkel.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 25-35 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'vakvezetes',
+                title: 'Vakvezetés (Aknamező)',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Ez a páros játék a bizalomépítés és a precíz, felelősségteljes kommunikáció egyik leghatékonyabb eszköze. A „vak” félnek teljesen rá kell hagyatkoznia a vezetőjére.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>Egy tágasabb térben alakítsanak ki egy egyszerű akadálypályát („aknamezőt”) székekből, táskákból, stb.</li>
+                        <li>A csoport tagjai párokra oszlanak. Az egyik fél szemét bekötik.</li>
+                        <li>A társa feladata, hogy a pálya egyik végéből a másikba vezesse kizárólag szóbeli utasításokkal. Fizikai kontaktus nem megengedett.</li>
+                        <li>Ha a bekötött szemű játékos hozzáér egy „aknához”, a párnak újra kell kezdenie.</li>
+                        <li>Miután sikerült, szerepet cserélnek.</li>
+                    </ol>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Kendők vagy sálak, különböző tárgyak az akadálypályához.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 20-30 perc.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'vak-rajzolas',
+                title: 'Vak rajzolás',
+                content: `
+                    <h3>Cél és pedagógiai háttér</h3>
+                    <p>Szórakoztató módon világít rá a kommunikáció kihívásaira. Megmutatja, mekkora szakadék lehet a szándék (amit mondani akarok) és az eredmény (amit a másik megért belőle) között. Fejleszti az aktív figyelmet és a leírókészséget.</p>
+                    <h4>Részletes megvalósítás</h4>
+                    <ol>
+                        <li>A tagok párokra oszlanak, és háttal ülnek egymásnak.</li>
+                        <li>Az egyik fél a „leíró”, a másik a „rajzoló”. A leíró kap egy egyszerű ábrát (pl. ház, virág).</li>
+                        <li>A leíró szavakkal írja le a képet, de nem nevezheti nevén a tárgyat (pl. nem mondhatja, hogy „rajzolj egy házat”). Csak formákat, vonalakat írhat le.</li>
+                        <li>A rajzoló nem kérdezhet vissza, csak rajzol az utasítások alapján.</li>
+                        <li>Az idő lejárta után összehasonlítják az eredeti és a rajzolt képet, majd szerepet cserélnek.</li>
+                    </ol>
+                    <h4>Eszközigény és időkeret</h4>
+                    <ul>
+                        <li><strong>Eszközigény:</strong> Papír, tollak, előre elkészített egyszerű ábrák.</li>
+                        <li><strong>Időkeret (17 főre):</strong> Kb. 15-25 perc.</li>
+                    </ul>
+                `
+            }
+        ];
+
+        const tabsContainer = document.getElementById('tabs-container');
+        const contentContainer = document.getElementById('content-container');
+        const printContentContainer = document.getElementById('print-content-container');
+
+        let activeTabId = games[0].id;
+
+        function renderTabs() {
+            tabsContainer.innerHTML = '';
+            games.forEach(game => {
+                const tabButton = document.createElement('button');
+                tabButton.innerText = game.title;
+                tabButton.className = `tab-button whitespace-nowrap px-4 py-2 text-sm font-medium rounded-md border-2 border-slate-300 text-slate-600 bg-white hover:bg-slate-200 transition-all duration-200 ${game.id === activeTabId ? 'tab-active' : ''}`;
+                tabButton.onclick = () => {
+                    activeTabId = game.id;
+                    render();
+                };
+                tabsContainer.appendChild(tabButton);
+            });
+        }
+
+        function renderContent() {
+            const activeGame = games.find(game => game.id === activeTabId);
+            if (activeGame) {
+                contentContainer.innerHTML = `
+                    <div class="game-content-wrapper bg-white p-6 md:p-8 rounded-lg shadow-md mt-4">
+                        <h2 class="text-2xl font-bold mb-4 text-slate-900">${activeGame.title}</h2>
+                        <div class="game-content-container text-slate-700">
+                            ${activeGame.content}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderPrintContent() {
+             printContentContainer.innerHTML = games.map(game => `
+                <div class="game-print-section">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900">${game.title}</h2>
+                    <div class="game-content-container text-slate-700">
+                        ${game.content}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function render() {
+            renderTabs();
+            renderContent();
+            // Scroll active tab into view if needed
+            const activeButton = tabsContainer.querySelector('.tab-active');
+            if(activeButton) {
+                activeButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+        
+        // Initial render
+        render();
+        renderPrintContent();
+
+    </script>
+</body>
+</html>
