@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="hu" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotebookLM Infografika: A Modern Kutató Eszköze</title>
+    
+    <!-- Chosen Palette: Energetic & Playful -->
+    <!-- Application Structure Plan: A single, scrollable narrative infographic replacing the previous tabbed structure. The flow is designed to guide the user logically: 1. A hook/introduction with a key concept visualization (Donut Chart). 2. A step-by-step visual explanation of the research workflow. 3. Concrete, real-world use cases presented in distinct cards. 4. A summative data visualization (Radar Chart) to encapsulate the tool's strengths. This linear, story-driven structure is better suited for an infographic format, making the information easily digestible in a single pass, which is the primary goal of this revision. -->
+    <!-- Visualization & Content Choices: 1. **Core Concept:** Goal: Inform. Viz: Donut Chart (Chart.js/Canvas) to show NotebookLM is source-grounded. Justification: A simple, instantly understandable visual for a core concept. 2. **Workflow:** Goal: Organize. Viz: Numbered cards with icons, connected visually with background elements (HTML/CSS). Justification: Breaks a process into clear, sequential steps without complex diagrams. 3. **Use Cases:** Goal: Organize/Inform. Viz: Styled content cards. Justification: Clearly separates distinct scenarios for readability. 4. **Effectiveness Summary:** Goal: Compare. Viz: Radar Chart (Chart.js/Canvas). Justification: Effectively compares performance across multiple qualitative metrics in a single, compact visual. Confirms NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F7F9FB;
+            --text-color: #073B4C;
+            --accent-blue: #118AB2;
+            --accent-green: #06D6A0;
+            --accent-yellow: #FFD166;
+            --accent-red: #EF476F;
+            --card-bg: #FFFFFF;
+            --border-color: #E6ECF1;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+                max-height: 500px;
+            }
+        }
+        .kpi-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold" style="color: var(--text-color);">NotebookLM</h1>
+            <p class="mt-4 text-lg md:text-xl" style="color: var(--accent-blue);">A modern kutató személyes MI-asszisztense</p>
+        </header>
+
+        <section id="intro" class="mb-20">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-left">
+                    <h2 class="text-3xl font-bold mb-4" style="color: var(--text-color);">A tudásodra épít, nem az internetre</h2>
+                    <p class="text-lg leading-relaxed mb-6" style="color: var(--accent-blue);">A NotebookLM egyedülálló képessége, hogy kizárólag a te általad feltöltött dokumentumokat használja forrásként. Ez garantálja, hogy a válaszok mindig relevánsak, pontosak és a saját anyagaiddal alátámasztottak. Felejtsd el a végtelen böngészést – a válaszok már a forrásaidban rejlenek.</p>
+                    <div class="kpi-card border-l-4" style="border-color: var(--accent-green);">
+                        <h3 class="text-xl font-semibold">Minden állítás forrásmegjelöléssel</h3>
+                        <p class="mt-2" style="color: var(--accent-blue);">Minden egyes választ, összefoglalót és ötletet forrásmegjelölésekkel támaszt alá, amelyek egyetlen kattintással visszavezetnek az eredeti szövegrészlethez. Ez a kutatás és a tényellenőrzés jövője.</p>
+                    </div>
+                </div>
+                <div class="kpi-card p-4">
+                    <h3 class="text-center text-lg font-semibold mb-2">Információfeldolgozás</h3>
+                    <div class="chart-container" style="height: 300px; max-height: 300px;">
+                        <canvas id="sourceChart"></canvas>
+                    </div>
+                     <p class="text-center mt-4 text-sm" style="color: var(--accent-blue);">Az eszköz szinte teljes egészében a felhasználó által biztosított, megbízható tudásbázisra támaszkodik.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflow" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">Hogyan alakítja át a kutatást?</h2>
+                <p class="mt-3 text-lg" style="color: var(--accent-blue);">Egy négylépéses folyamat, amely felgyorsítja a tudásalapú munkát.</p>
+            </div>
+            <div class="relative grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                 <div class="hidden lg:block absolute top-1/2 -translate-y-1/2 left-0 w-full h-px bg-gray-200"></div>
+                 <div class="kpi-card text-center z-10">
+                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: #E7F7F0; color: var(--accent-green);"><span class="text-3xl font-bold">1</span></div>
+                    <h3 class="text-xl font-bold mb-2">Forráskezelés</h3>
+                    <p style="color: var(--accent-blue);">Töltsd fel a dokumentumaidat (PDF, TXT, Google Docs) és hozd létre a személyes tudásbázisodat.</p>
+                </div>
+                 <div class="kpi-card text-center z-10">
+                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: #FFF6E0; color: var(--accent-yellow);"><span class="text-3xl font-bold">2</span></div>
+                    <h3 class="text-xl font-bold mb-2">Előkészítés</h3>
+                    <p style="color: var(--accent-blue);">Készíts azonnali összefoglalókat, keress kulcsfogalmakat, és generálj kutatási terveket.</p>
+                </div>
+                 <div class="kpi-card text-center z-10">
+                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: #E3F2F8; color: var(--accent-blue);"><span class="text-3xl font-bold">3</span></div>
+                    <h3 class="text-xl font-bold mb-2">Elemzés</h3>
+                    <p style="color: var(--accent-blue);">Tegyél fel komplex kérdéseket, azonosíts mintázatokat és fedezz fel rejtett összefüggéseket.</p>
+                </div>
+                 <div class="kpi-card text-center z-10">
+                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background-color: #FDE7ED; color: var(--accent-red);"><span class="text-3xl font-bold">4</span></div>
+                    <h3 class="text-xl font-bold mb-2">Tartalomkészítés</h3>
+                    <p style="color: var(--accent-blue);">Generálj vázlatokat, fogalmazz bekezdéseket és készíts tanulási segédleteket percek alatt.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="examples" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">Gyakorlati alkalmazások</h2>
+                <p class="mt-3 text-lg" style="color: var(--accent-blue);">Valós példák a tanulás és kutatás világából.</p>
+            </div>
+            <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="kpi-card">
+                    <h3 class="text-2xl font-bold mb-3" style="color: var(--accent-blue);">A történész hallgató</h3>
+                    <p class="mb-4"><strong>Feladat:</strong> Dolgozat a Római Birodalom bukásának gazdasági okairól 15 tudományos cikk alapján.</p>
+                    <ul class="list-disc list-inside space-y-2" style="color: var(--text-color);">
+                        <li>Kulcsérvek összegzése</li>
+                        <li>Ismétlődő témák azonosítása</li>
+                        <li>Szerzők közötti viták feltárása</li>
+                        <li>Dolgozatvázlat generálása</li>
+                    </ul>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-2xl font-bold mb-3" style="color: var(--accent-green);">A biológus kutató</h3>
+                    <p class="mb-4"><strong>Feladat:</strong> Irodalmi áttekintés a CRISPR etikai vonatkozásairól 50 publikációból.</p>
+                    <ul class="list-disc list-inside space-y-2" style="color: var(--text-color);">
+                        <li>Módszertani áttekintés</li>
+                        <li>Fogalmi szószedet készítése</li>
+                        <li>Etikai viták idővonalazása</li>
+                        <li>Új kutatási rések keresése</li>
+                    </ul>
+                </div>
+                 <div class="kpi-card">
+                    <h3 class="text-2xl font-bold mb-3" style="color: var(--accent-red);">A piackutató elemző</h3>
+                    <p class="mb-4"><strong>Feladat:</strong> Új termék bevezetésének vizsgálata 45 riport és interjú alapján.</p>
+                    <ul class="list-disc list-inside space-y-2" style="color: var(--text-color);">
+                        <li>Fogyasztói igények összegzése</li>
+                        <li>Piaci trendek azonosítása</li>
+                        <li>SWOT-analízis előkészítése</li>
+                        <li>Termékjavaslatok generálása</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">A NotebookLM szuperképességei</h2>
+                <p class="mt-3 text-lg" style="color: var(--accent-blue);">Miben nyújtja a legnagyobb segítséget?</p>
+            </div>
+            <div class="kpi-card p-4 sm:p-6 md:p-8">
+                <div class="chart-container">
+                    <canvas id="capabilitiesChart"></canvas>
+                </div>
+            </div>
+             <div class="max-w-3xl mx-auto mt-8 text-center" style="color: var(--accent-blue);">
+                <p>A diagram vizuálisan összegzi a NotebookLM erősségeit. Kiemelkedően teljesít a forrásokban való gyors tájékozódásban, a pontos információk kinyerésében és a kezdeti vázlatok elkészítésében, ezzel radikálisan felgyorsítva a tudásalapú munkát.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+
+            const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+            new Chart(sourceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Felhasználói források', 'Általános MI tudás'],
+                    datasets: [{
+                        data: [95, 5],
+                        backgroundColor: [
+                            '#118AB2', // accent-blue
+                            '#E6ECF1'  // border-color
+                        ],
+                        borderColor: '#F7F9FB', // bg-color
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                             labels: {
+                                font: { size: 12, family: 'Inter, sans-serif' },
+                                color: '#073B4C'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: { title: tooltipTitleCallback }
+                        }
+                    }
+                }
+            });
+
+            const capabilitiesCtx = document.getElementById('capabilitiesChart').getContext('2d');
+            new Chart(capabilitiesCtx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Összefoglalók', 
+                        ['Információk', 'kinyerése'], 
+                        ['Források', 'összehasonlítása'], 
+                        'Vázlatkészítés', 
+                        ['Új ötletek', 'generálása'], 
+                        ['Idézetek', 'keresése']
+                    ],
+                    datasets: [{
+                        label: 'NotebookLM hatékonysága',
+                        data: [90, 95, 80, 85, 75, 100],
+                        fill: true,
+                        backgroundColor: 'rgba(6, 214, 160, 0.2)',
+                        borderColor: '#06D6A0',
+                        pointBackgroundColor: '#06D6A0',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#06D6A0'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E6ECF1' },
+                            grid: { color: '#E6ECF1' },
+                            pointLabels: {
+                                font: { size: 13, family: 'Inter, sans-serif' },
+                                color: '#073B4C'
+                            },
+                            ticks: {
+                                backdropColor: 'rgba(255, 255, 255, 0.7)',
+                                color: '#118AB2',
+                                stepSize: 20
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                             display: false
+                        },
+                        tooltip: {
+                             callbacks: { title: tooltipTitleCallback }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
